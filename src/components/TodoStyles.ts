@@ -6,16 +6,23 @@ export const TodoContainer = styled.div`
   margin: 0 auto;
   padding: 20px;
   font-family: Arial, sans-serif;
+  background-color: #f0f0f0;
+  min-height: 100vh;
 `;
 
 export const TodoTitle = styled.h1`
   text-align: center;
   color: #333;
+  margin-bottom: 20px;
 `;
 
 export const TodoInputContainer = styled.div`
   display: flex;
   margin-bottom: 20px;
+  background-color: white;
+  padding: 10px;
+  border-radius: 5px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 `;
 
 export const TodoInput = styled.input`
@@ -24,6 +31,7 @@ export const TodoInput = styled.input`
   font-size: 16px;
   border: 1px solid #ddd;
   border-radius: 4px;
+  margin-right: 10px;
 `;
 
 export const TodoSelect = styled.select`
@@ -31,7 +39,7 @@ export const TodoSelect = styled.select`
   font-size: 16px;
   border: 1px solid #ddd;
   border-radius: 4px;
-  margin-left: 10px;
+  margin-right: 10px;
 `;
 
 export const TodoButton = styled.button`
@@ -42,7 +50,6 @@ export const TodoButton = styled.button`
   border: none;
   border-radius: 4px;
   cursor: pointer;
-  margin-left: 10px;
 
   &:hover {
     background-color: #45a049;
@@ -78,21 +85,21 @@ export const TodoList = styled.ul`
 export const TodoListItem = styled.li`
   display: flex;
   align-items: center;
-  padding: 10px;
-  border-bottom: 1px solid #ddd;
-
-  &:last-child {
-    border-bottom: none;
-  }
+  padding: 15px;
+  background-color: white;
+  border-radius: 5px;
+  margin-bottom: 10px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 `;
 
 export const TodoCheckbox = styled.input`
-  margin-right: 10px;
+  margin-right: 15px;
+  transform: scale(1.2);
 `;
 
 export const TodoText = styled.span<{ completed: boolean; priority: PriorityType }>`
   flex-grow: 1;
-  margin-right: 10px;
+  margin-right: 15px;
   text-decoration: ${props => props.completed ? 'line-through' : 'none'};
   color: ${props => props.completed ? '#888' : 
     props.priority === 'high' ? 'red' :
@@ -101,7 +108,6 @@ export const TodoText = styled.span<{ completed: boolean; priority: PriorityType
 `;
 
 export const TodoDeleteButton = styled.button`
-  margin-left: 10px;
   padding: 5px 10px;
   font-size: 14px;
   background-color: #f44336;
@@ -120,14 +126,24 @@ export const TodoSummary = styled.div`
   text-align: center;
   font-size: 16px;
   color: #666;
+  background-color: white;
+  padding: 10px;
+  border-radius: 5px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 `;
 
 export const PriorityGroup = styled.div`
   margin-bottom: 20px;
+  background-color: white;
+  padding: 15px;
+  border-radius: 5px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 `;
 
 export const PriorityTitle = styled.h3`
   font-size: 18px;
   color: #333;
-  margin-bottom: 10px;
+  margin-bottom: 15px;
+  border-bottom: 2px solid #f0f0f0;
+  padding-bottom: 10px;
 `;
