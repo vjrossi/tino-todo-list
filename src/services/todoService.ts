@@ -52,7 +52,7 @@ export const todoService = {
     const [reorderedItem] = result.splice(startIndex, 1);
     result.splice(endIndex, 0, reorderedItem);
 
-    // Update the order property for all todos
+    // Update the order property for each todo
     const updatedTodos = result.map((todo, index) => ({
       ...todo,
       order: index

@@ -1,4 +1,5 @@
 import React, { useState, KeyboardEvent } from 'react';
+import { DragDropContext, Droppable, Draggable, DropResult } from 'react-beautiful-dnd';
 import { todoService } from '../services/todoService';
 import { TodoItem, FilterType, PriorityType } from '../types/todo';
 import {
@@ -68,6 +69,20 @@ const Todo: React.FC = () => {
     }
   };
 
+  const onDragEnd = (result: DropResult) => {
+    if (!result.destination) {
+      return;
+    }
+
+    const items = todoService.reorderTodos(
+      todos,
+      result.source.index,
+      result.destination.index
+    );
+
+    setTodos(items);
+  };
+
   const filteredTodos = todos
     .filter(todo => {
       if (filter === 'active') return !todo.completed;
@@ -105,43 +120,50 @@ const Todo: React.FC = () => {
         <TodoFilterButton active={filter === 'active'} onClick={() => setFilter('active')}>Active</TodoFilterButton>
         <TodoFilterButton active={filter === 'completed'} onClick={() => setFilter('completed')}>Completed</TodoFilterButton>
       </TodoFilterContainer>
-      <TodoList>
-        {filteredTodos.map(todo => (
-          <TodoListItem key={todo.id}>
-            <TodoCheckbox
-              type="checkbox"
-              checked={todo.completed}
-              onChange={() => toggleTodo(todo.id)}
-            />
-            {editingId === todo.id ? (
-              <TodoInput
-                type="text"
-                defaultValue={todo.text}
-                onBlur={(e) => finishEditing(todo.id, e.target.value)}
-                onKeyDown={(e) => handleEditKeyDown(e, todo.id)}
-                autoFocus
-              />
-            ) : (
-              <TodoText
-                completed={todo.completed}
-                priority={todo.priority}
-                onDoubleClick={() => startEditing(todo.id)}
-              >
-                {todo.text}
-              </TodoText>
-            )}
-            <TodoSelect 
-              value={todo.priority} 
-              onChange={(e) => changePriority(todo.id, e.target.value as PriorityType)}
-            >
-              <option value="low">Low</option>
-              <option value="medium">Medium</option>
-              <option value="high">High</option>
-            </TodoSelect>
-            <TodoDeleteButton onClick={() => deleteTodo(todo.id)}>Delete</TodoDeleteButton>
-          </TodoListItem>
-        ))}
-      </TodoList>
+      <DragDropContext onDragEnd={onDragEnd}>
+        <Droppable droppableId="todos">
+          {(provided) => (
+            <TodoList {...provided.droppableProps} ref={provided.innerRef}>
+              {filteredTodos.map((todo, index) => (
+                <Draggable key={todo.id} draggableId={todo.id.toString()} index={index}>
+                  {(provided) => (
+                    <TodoListItem
+                      ref={provided.innerRef}
+                      {...provided.draggableProps}
+                      {...provided.dragHandleProps}
+                    >
+                      <TodoCheckbox
+                        type="checkbox"
+                        checked={todo.completed}
+                        onChange={() => toggleTodo(todo.id)}
+                      />
+                      <TodoText
+                        completed={todo.completed}
+                        priority={todo.priority}
+                        onClick={() => toggleTodo(todo.id)}
+                      >
+                        {todo.text}
+                      </TodoText>
+                      <TodoSelect
+                        value={todo.priority}
+                        onChange={(e) => changePriority(todo.id, e.target.value as PriorityType)}
+                      >
+                        <option value="low">Low</option>
+                        <option value="medium">Medium</option>
+                        <option value="high">High</option>
+                      </TodoSelect>
+                      <TodoDeleteButton onClick={() => deleteTodo(todo.id)}>
+                        Delete
+                      </TodoDeleteButton>
+                    </TodoListItem>
+                  )}
+                </Draggable>
+              ))}
+              {provided.placeholder}
+            </TodoList>
+          )}
+        </Droppable>
+      </DragDropContext>
       <TodoSummary>
         {filter === 'all' && `Total: ${todos.length}`}
         {filter === 'active' && `Active: ${todos.filter(todo => !todo.completed).length}`}
