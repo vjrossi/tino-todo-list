@@ -18,7 +18,13 @@ export const todoService = {
     todoService.saveTodos(updatedTodos);
     return updatedTodos;
   },
-
+  editTodo: (todos: TodoItem[], id: number, newText: string): TodoItem[] => {
+    const updatedTodos = todos.map(todo =>
+      todo.id === id ? { ...todo, text: newText.trim() } : todo
+    );
+    todoService.saveTodos(updatedTodos);
+    return updatedTodos;
+  },
   toggleTodo: (todos: TodoItem[], id: number): TodoItem[] => {
     const updatedTodos = todos.map(todo =>
       todo.id === id ? { ...todo, completed: !todo.completed } : todo

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, KeyboardEvent } from 'react';
 import { todoService } from '../services/todoService';
 import { TodoItem, FilterType, PriorityType } from '../types/todo';
 import {
@@ -25,6 +25,12 @@ const Todo: React.FC = () => {
   const [priority, setPriority] = useState<PriorityType>('medium');
   const [editingId, setEditingId] = useState<number | null>(null);
 
+  const handleInputKeyPress = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === 'Enter' && inputText.trim() !== '') {
+      addTodo();
+    }
+  };
+
   const addTodo = () => {
     if (inputText.trim() !== '') {
       setTodos(todoService.addTodo(todos, inputText, priority));
@@ -44,6 +50,24 @@ const Todo: React.FC = () => {
     setTodos(todoService.changePriority(todos, id, newPriority));
   };
 
+  const startEditing = (id: number) => {
+    setEditingId(id);
+  };
+
+  const finishEditing = (id: number, newText: string) => {
+    if (newText.trim() !== '') {
+      setTodos(todoService.editTodo(todos, id, newText));
+    }
+    setEditingId(null);
+  };
+
+  const handleEditKeyDown = (e: KeyboardEvent<HTMLInputElement>, id: number) => {
+    if (e.key === 'Enter') {
+      e.preventDefault();
+      finishEditing(id, e.currentTarget.value);
+    }
+  };
+
   const filteredTodos = todos
     .filter(todo => {
       if (filter === 'active') return !todo.completed;
@@ -55,19 +79,6 @@ const Todo: React.FC = () => {
       return priorityOrder[a.priority] - priorityOrder[b.priority];
     });
 
-  const startEditing = (id: number) => {
-    setEditingId(id);
-  };
-
-  const finishEditing = (id: number, newText: string) => {
-    if (newText.trim() !== '') {
-      setTodos(todos.map(todo =>
-        todo.id === id ? { ...todo, text: newText.trim(), editing: false } : todo
-      ));
-    }
-    setEditingId(null);
-  };
-
   return (
     <TodoContainer>
       <TodoTitle>Tino's Todo List</TodoTitle>
@@ -76,6 +87,7 @@ const Todo: React.FC = () => {
           type="text"
           value={inputText}
           onChange={(e) => setInputText(e.target.value)}
+          onKeyPress={handleInputKeyPress}
           placeholder="Add a new todo"
         />
         <TodoSelect 
@@ -106,11 +118,7 @@ const Todo: React.FC = () => {
                 type="text"
                 defaultValue={todo.text}
                 onBlur={(e) => finishEditing(todo.id, e.target.value)}
-                onKeyPress={(e) => {
-                  if (e.key === 'Enter') {
-                    finishEditing(todo.id, e.currentTarget.value);
-                  }
-                }}
+                onKeyDown={(e) => handleEditKeyDown(e, todo.id)}
                 autoFocus
               />
             ) : (
