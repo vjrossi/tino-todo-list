@@ -23,6 +23,7 @@ const Todo: React.FC = () => {
   const [inputText, setInputText] = useState('');
   const [filter, setFilter] = useState<FilterType>('all');
   const [priority, setPriority] = useState<PriorityType>('medium');
+  const [editingId, setEditingId] = useState<number | null>(null);
 
   const addTodo = () => {
     if (inputText.trim() !== '') {
@@ -53,6 +54,19 @@ const Todo: React.FC = () => {
       const priorityOrder = { high: 0, medium: 1, low: 2 };
       return priorityOrder[a.priority] - priorityOrder[b.priority];
     });
+
+  const startEditing = (id: number) => {
+    setEditingId(id);
+  };
+
+  const finishEditing = (id: number, newText: string) => {
+    if (newText.trim() !== '') {
+      setTodos(todos.map(todo =>
+        todo.id === id ? { ...todo, text: newText.trim(), editing: false } : todo
+      ));
+    }
+    setEditingId(null);
+  };
 
   return (
     <TodoContainer>
@@ -87,9 +101,27 @@ const Todo: React.FC = () => {
               checked={todo.completed}
               onChange={() => toggleTodo(todo.id)}
             />
-            <TodoText completed={todo.completed} priority={todo.priority}>
-              {todo.text}
-            </TodoText>
+            {editingId === todo.id ? (
+              <TodoInput
+                type="text"
+                defaultValue={todo.text}
+                onBlur={(e) => finishEditing(todo.id, e.target.value)}
+                onKeyPress={(e) => {
+                  if (e.key === 'Enter') {
+                    finishEditing(todo.id, e.currentTarget.value);
+                  }
+                }}
+                autoFocus
+              />
+            ) : (
+              <TodoText
+                completed={todo.completed}
+                priority={todo.priority}
+                onDoubleClick={() => startEditing(todo.id)}
+              >
+                {todo.text}
+              </TodoText>
+            )}
             <TodoSelect 
               value={todo.priority} 
               onChange={(e) => changePriority(todo.id, e.target.value as PriorityType)}

@@ -4,6 +4,7 @@ export interface TodoItem {
     completed: boolean;
     priority: PriorityType;
     order: number; // New property
+    editing: boolean;
 }
 
 export type FilterType = 'all' | 'active' | 'completed';

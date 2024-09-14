@@ -13,7 +13,7 @@ export const todoService = {
   },
 
   addTodo: (todos: TodoItem[], text: string, priority: PriorityType): TodoItem[] => {
-    const newTodo: TodoItem = { id: Date.now(), text, completed: false, priority, order: todos.length };
+    const newTodo: TodoItem = { id: Date.now(), text, completed: false, priority, order: todos.length, editing: false };
     const updatedTodos = [...todos, newTodo];
     todoService.saveTodos(updatedTodos);
     return updatedTodos;

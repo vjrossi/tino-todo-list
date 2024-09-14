@@ -97,6 +97,7 @@ export const TodoText = styled.span<{ completed: boolean; priority: PriorityType
   color: ${props => props.completed ? '#888' : 
     props.priority === 'high' ? 'red' :
     props.priority === 'medium' ? 'orange' : 'green'};
+  cursor: pointer;
 `;
 
 export const TodoDeleteButton = styled.button`
