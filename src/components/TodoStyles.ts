@@ -121,3 +121,13 @@ export const TodoSummary = styled.div`
   font-size: 16px;
   color: #666;
 `;
+
+export const PriorityGroup = styled.div`
+  margin-bottom: 20px;
+`;
+
+export const PriorityTitle = styled.h3`
+  font-size: 18px;
+  color: #333;
+  margin-bottom: 10px;
+`;

@@ -16,7 +16,9 @@ import {
   TodoCheckbox,
   TodoText,
   TodoDeleteButton,
-  TodoSummary
+  TodoSummary,
+  PriorityGroup,
+  PriorityTitle
 } from './TodoStyles';
 
 const Todo: React.FC = () => {
@@ -74,13 +76,29 @@ const Todo: React.FC = () => {
       return;
     }
 
-    const items = todoService.reorderTodos(
-      todos,
-      result.source.index,
-      result.destination.index
-    );
+    const { source, destination } = result;
 
-    setTodos(items);
+    if (source.droppableId === destination.droppableId) {
+      // Reorder within the same priority group
+      const priority = source.droppableId as PriorityType;
+      const items = todoService.reorderTodosWithinPriority(
+        todos,
+        priority,
+        source.index,
+        destination.index
+      );
+      setTodos(items);
+    } else {
+      // Move between priority groups
+      const items = todoService.moveTodoBetweenPriorities(
+        todos,
+        source.droppableId as PriorityType,
+        destination.droppableId as PriorityType,
+        source.index,
+        destination.index
+      );
+      setTodos(items);
+    }
   };
 
   const filteredTodos = todos
@@ -93,6 +111,12 @@ const Todo: React.FC = () => {
       const priorityOrder = { high: 0, medium: 1, low: 2 };
       return priorityOrder[a.priority] - priorityOrder[b.priority];
     });
+
+  const groupedTodos = {
+    high: filteredTodos.filter(todo => todo.priority === 'high'),
+    medium: filteredTodos.filter(todo => todo.priority === 'medium'),
+    low: filteredTodos.filter(todo => todo.priority === 'low'),
+  };
 
   return (
     <TodoContainer>
@@ -121,48 +145,53 @@ const Todo: React.FC = () => {
         <TodoFilterButton active={filter === 'completed'} onClick={() => setFilter('completed')}>Completed</TodoFilterButton>
       </TodoFilterContainer>
       <DragDropContext onDragEnd={onDragEnd}>
-        <Droppable droppableId="todos">
-          {(provided) => (
-            <TodoList {...provided.droppableProps} ref={provided.innerRef}>
-              {filteredTodos.map((todo, index) => (
-                <Draggable key={todo.id} draggableId={todo.id.toString()} index={index}>
-                  {(provided) => (
-                    <TodoListItem
-                      ref={provided.innerRef}
-                      {...provided.draggableProps}
-                      {...provided.dragHandleProps}
-                    >
-                      <TodoCheckbox
-                        type="checkbox"
-                        checked={todo.completed}
-                        onChange={() => toggleTodo(todo.id)}
-                      />
-                      <TodoText
-                        completed={todo.completed}
-                        priority={todo.priority}
-                        onClick={() => toggleTodo(todo.id)}
-                      >
-                        {todo.text}
-                      </TodoText>
-                      <TodoSelect
-                        value={todo.priority}
-                        onChange={(e) => changePriority(todo.id, e.target.value as PriorityType)}
-                      >
-                        <option value="low">Low</option>
-                        <option value="medium">Medium</option>
-                        <option value="high">High</option>
-                      </TodoSelect>
-                      <TodoDeleteButton onClick={() => deleteTodo(todo.id)}>
-                        Delete
-                      </TodoDeleteButton>
-                    </TodoListItem>
-                  )}
-                </Draggable>
-              ))}
-              {provided.placeholder}
-            </TodoList>
-          )}
-        </Droppable>
+        {Object.entries(groupedTodos).map(([priority, todos]) => (
+          <PriorityGroup key={priority}>
+            <PriorityTitle>{priority.charAt(0).toUpperCase() + priority.slice(1)} Priority</PriorityTitle>
+            <Droppable droppableId={priority}>
+              {(provided) => (
+                <TodoList {...provided.droppableProps} ref={provided.innerRef}>
+                  {todos.map((todo, index) => (
+                    <Draggable key={todo.id} draggableId={todo.id.toString()} index={index}>
+                      {(provided) => (
+                        <TodoListItem
+                          ref={provided.innerRef}
+                          {...provided.draggableProps}
+                          {...provided.dragHandleProps}
+                        >
+                          <TodoCheckbox
+                            type="checkbox"
+                            checked={todo.completed}
+                            onChange={() => toggleTodo(todo.id)}
+                          />
+                          <TodoText
+                            completed={todo.completed}
+                            priority={todo.priority}
+                            onClick={() => toggleTodo(todo.id)}
+                          >
+                            {todo.text}
+                          </TodoText>
+                          <TodoSelect
+                            value={todo.priority}
+                            onChange={(e) => changePriority(todo.id, e.target.value as PriorityType)}
+                          >
+                            <option value="low">Low</option>
+                            <option value="medium">Medium</option>
+                            <option value="high">High</option>
+                          </TodoSelect>
+                          <TodoDeleteButton onClick={() => deleteTodo(todo.id)}>
+                            Delete
+                          </TodoDeleteButton>
+                        </TodoListItem>
+                      )}
+                    </Draggable>
+                  ))}
+                  {provided.placeholder}
+                </TodoList>
+              )}
+            </Droppable>
+          </PriorityGroup>
+        ))}
       </DragDropContext>
       <TodoSummary>
         {filter === 'all' && `Total: ${todos.length}`}
