@@ -3,7 +3,7 @@ export interface TodoItem {
     text: string;
     completed: boolean;
     priority: PriorityType;
-    order: number; // New property
+    order: number;
     editing: boolean;
 }
 

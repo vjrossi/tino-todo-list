@@ -1,4 +1,4 @@
-import React, { useState, KeyboardEvent } from 'react';
+import React, { useState } from 'react';
 import { DragDropContext, Droppable, Draggable, DropResult } from 'react-beautiful-dnd';
 import { todoService } from '../services/todoService';
 import { TodoItem, FilterType, PriorityType } from '../types/todo';
@@ -66,13 +66,6 @@ const Todo: React.FC = () => {
     setEditingId(null);
   };
 
-  const handleEditKeyDown = (e: KeyboardEvent<HTMLInputElement>, id: number) => {
-    if (e.key === 'Enter') {
-      e.preventDefault();
-      finishEditing(id, e.currentTarget.value);
-    }
-  };
-
   const onDragEnd = (result: DropResult) => {
     if (!result.destination) {
       return;
@@ -121,12 +114,14 @@ const Todo: React.FC = () => {
   };
 
   return (
-    <TodoContainer>
-      <CompactModeToggle onClick={() => setIsCompactMode(!isCompactMode)}>
+    <TodoContainer id="todo-container">
+      <CompactModeToggle id="compact-mode-toggle" onClick={() => setIsCompactMode(!isCompactMode)}>
         {isCompactMode ? 'Normal Mode' : 'Compact Mode'}
-      </CompactModeToggle>      <TodoTitle>Tino's Todo List</TodoTitle>
-      <TodoInputContainer>
+      </CompactModeToggle>
+      <TodoTitle id="todo-title">Tino's Todo List</TodoTitle>
+      <TodoInputContainer id="todo-input-container">
         <TodoInput
+          id="todo-input"
           type="text"
           value={inputText}
           onChange={(e) => setInputText(e.target.value)}
@@ -134,6 +129,7 @@ const Todo: React.FC = () => {
           placeholder="Add a new todo"
         />
         <TodoSelect 
+          id="priority-select"
           value={priority} 
           onChange={(e) => setPriority(e.target.value as PriorityType)}
         >
@@ -141,12 +137,12 @@ const Todo: React.FC = () => {
           <option value="medium">Medium</option>
           <option value="high">High</option>
         </TodoSelect>
-        <TodoButton onClick={addTodo}>Add</TodoButton>
+        <TodoButton id="add-todo-button" onClick={addTodo}>Add</TodoButton>
       </TodoInputContainer>
-      <TodoFilterContainer>
-        <TodoFilterButton active={filter === 'all'} onClick={() => setFilter('all')}>All</TodoFilterButton>
-        <TodoFilterButton active={filter === 'active'} onClick={() => setFilter('active')}>Active</TodoFilterButton>
-        <TodoFilterButton active={filter === 'completed'} onClick={() => setFilter('completed')}>Completed</TodoFilterButton>
+      <TodoFilterContainer id="todo-filter-container">
+        <TodoFilterButton id="filter-all" active={filter === 'all'} onClick={() => setFilter('all')}>All</TodoFilterButton>
+        <TodoFilterButton id="filter-active" active={filter === 'active'} onClick={() => setFilter('active')}>Active</TodoFilterButton>
+        <TodoFilterButton id="filter-completed" active={filter === 'completed'} onClick={() => setFilter('completed')}>Completed</TodoFilterButton>
       </TodoFilterContainer>
       <DragDropContext onDragEnd={onDragEnd}>
         {Object.entries(groupedTodos).map(([priority, todos]) => (
@@ -185,6 +181,7 @@ const Todo: React.FC = () => {
                                 onBlur={(e) => finishEditing(todo.id, e.target.value)}
                                 onKeyDown={(e) => {
                                   if (e.key === 'Enter') {
+                                    e.preventDefault();
                                     finishEditing(todo.id, e.currentTarget.value);
                                   }
                                 }}
@@ -226,7 +223,7 @@ const Todo: React.FC = () => {
           </PriorityGroup>
         ))}
       </DragDropContext>
-      <TodoSummary>
+      <TodoSummary id="todo-summary">
         {filter === 'all' && `Total: ${todos.length}`}
         {filter === 'active' && `Active: ${todos.filter(todo => !todo.completed).length}`}
         {filter === 'completed' && `Completed: ${todos.filter(todo => todo.completed).length}`}

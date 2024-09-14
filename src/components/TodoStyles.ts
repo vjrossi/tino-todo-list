@@ -176,7 +176,7 @@ export const TodoContainerCompact = styled(TodoContainer)`
 
 export const TodoListItemCompact = styled(TodoListItem)`
   padding: 5px;
-  margin-bottom: 4px;
+  margin-bottom: 14px;
 `;
 
 export const TodoTextCompact = styled(TodoText)`
