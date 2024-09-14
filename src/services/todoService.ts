@@ -1,4 +1,4 @@
-import { TodoItem } from '../types/todo';
+import { TodoItem, PriorityType } from '../types/todo';
 
 const STORAGE_KEY = 'todos';
 
@@ -12,8 +12,8 @@ export const todoService = {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(todos));
   },
 
-  addTodo: (todos: TodoItem[], text: string, priority: 'low' | 'medium' | 'high'): TodoItem[] => {
-    const newTodo: TodoItem = { id: Date.now(), text, completed: false, priority };
+  addTodo: (todos: TodoItem[], text: string, priority: PriorityType): TodoItem[] => {
+    const newTodo: TodoItem = { id: Date.now(), text, completed: false, priority, order: todos.length };
     const updatedTodos = [...todos, newTodo];
     todoService.saveTodos(updatedTodos);
     return updatedTodos;
@@ -33,10 +33,25 @@ export const todoService = {
     return updatedTodos;
   },
 
-  changePriority: (todos: TodoItem[], id: number, newPriority: 'low' | 'medium' | 'high'): TodoItem[] => {
+  changePriority: (todos: TodoItem[], id: number, newPriority: PriorityType): TodoItem[] => {
     const updatedTodos = todos.map(todo =>
       todo.id === id ? { ...todo, priority: newPriority } : todo
     );
+    todoService.saveTodos(updatedTodos);
+    return updatedTodos;
+  },
+
+  reorderTodos: (todos: TodoItem[], startIndex: number, endIndex: number): TodoItem[] => {
+    const result = Array.from(todos);
+    const [reorderedItem] = result.splice(startIndex, 1);
+    result.splice(endIndex, 0, reorderedItem);
+
+    // Update the order property for all todos
+    const updatedTodos = result.map((todo, index) => ({
+      ...todo,
+      order: index
+    }));
+
     todoService.saveTodos(updatedTodos);
     return updatedTodos;
   },
