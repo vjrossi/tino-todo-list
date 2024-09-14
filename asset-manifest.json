@@ -1,0 +1,15 @@
+{
+  "files": {
+    "main.css": "/tino-todo-list/static/css/main.100b037b.css",
+    "main.js": "/tino-todo-list/static/js/main.1e651968.js",
+    "static/js/453.94f13de4.chunk.js": "/tino-todo-list/static/js/453.94f13de4.chunk.js",
+    "index.html": "/tino-todo-list/index.html",
+    "main.100b037b.css.map": "/tino-todo-list/static/css/main.100b037b.css.map",
+    "main.1e651968.js.map": "/tino-todo-list/static/js/main.1e651968.js.map",
+    "453.94f13de4.chunk.js.map": "/tino-todo-list/static/js/453.94f13de4.chunk.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.100b037b.css",
+    "static/js/main.1e651968.js"
+  ]
+}
