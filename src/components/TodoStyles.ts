@@ -80,16 +80,22 @@ export const TodoFilterButton = styled.button<{ active: boolean }>`
 export const TodoList = styled.ul`
   list-style-type: none;
   padding: 0;
+  margin: 0;
 `;
 
 export const TodoListItem = styled.li`
   display: flex;
   align-items: center;
-  padding: 15px;
+  padding: 10px;
   background-color: white;
-  border-radius: 5px;
-  margin-bottom: 10px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  border: 1px solid #e0e0e0;
+  border-radius: 4px;
+  margin-bottom: 8px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+
+  &:first-child {
+    border-top: 1px solid #e0e0e0;
+  }
 `;
 
 export const TodoCheckbox = styled.input`

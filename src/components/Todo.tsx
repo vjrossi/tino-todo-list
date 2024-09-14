@@ -167,9 +167,33 @@ const Todo: React.FC = () => {
                           <TodoText
                             completed={todo.completed}
                             priority={todo.priority}
-                            onClick={() => toggleTodo(todo.id)}
+                            onClick={() => startEditing(todo.id)}
                           >
-                            {todo.text}
+                            {editingId === todo.id ? (
+                              <input
+                                type="text"
+                                defaultValue={todo.text}
+                                onBlur={(e) => finishEditing(todo.id, e.target.value)}
+                                onKeyDown={(e) => {
+                                  if (e.key === 'Enter') {
+                                    finishEditing(todo.id, e.currentTarget.value);
+                                  }
+                                }}
+                                autoFocus
+                                style={{
+                                  width: '100%',
+                                  border: 'none',
+                                  background: 'transparent',
+                                  fontSize: 'inherit',
+                                  fontFamily: 'inherit',
+                                  color: 'inherit',
+                                  outline: 'none',
+                                  padding: '0',
+                                }}
+                              />
+                            ) : (
+                              todo.text
+                            )}
                           </TodoText>
                           <TodoSelect
                             value={todo.priority}
