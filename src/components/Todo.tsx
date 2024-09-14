@@ -1,40 +1,34 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
+import { todoService } from '../services/todoService';
+import { TodoItem } from '../types/todo';
 
-interface TodoItem {
-  id: number;
-  text: string;
-  completed: boolean;
-}
+type FilterType = 'all' | 'active' | 'completed';
 
 const Todo: React.FC = () => {
-  const [todos, setTodos] = useState<TodoItem[]>(() => {
-    // Load todos from localStorage on initial render
-    const savedTodos = localStorage.getItem('todos');
-    return savedTodos ? JSON.parse(savedTodos) : [];
-  });
+  const [todos, setTodos] = useState<TodoItem[]>(() => todoService.getTodos());
   const [inputText, setInputText] = useState('');
-
-  // Save todos to localStorage whenever the todos state changes
-  useEffect(() => {
-    localStorage.setItem('todos', JSON.stringify(todos));
-  }, [todos]);
+  const [filter, setFilter] = useState<FilterType>('all');
 
   const addTodo = () => {
     if (inputText.trim() !== '') {
-      setTodos([...todos, { id: Date.now(), text: inputText, completed: false }]);
+      setTodos(todoService.addTodo(todos, inputText));
       setInputText('');
     }
   };
 
   const toggleTodo = (id: number) => {
-    setTodos(todos.map(todo =>
-      todo.id === id ? { ...todo, completed: !todo.completed } : todo
-    ));
+    setTodos(todoService.toggleTodo(todos, id));
   };
 
   const deleteTodo = (id: number) => {
-    setTodos(todos.filter(todo => todo.id !== id));
+    setTodos(todoService.deleteTodo(todos, id));
   };
+
+  const filteredTodos = todos.filter(todo => {
+    if (filter === 'active') return !todo.completed;
+    if (filter === 'completed') return todo.completed;
+    return true;
+  });
 
   return (
     <div>
@@ -46,8 +40,13 @@ const Todo: React.FC = () => {
         placeholder="Add a new todo"
       />
       <button onClick={addTodo}>Add</button>
+      <div>
+        <button onClick={() => setFilter('all')}>All</button>
+        <button onClick={() => setFilter('active')}>Active</button>
+        <button onClick={() => setFilter('completed')}>Completed</button>
+      </div>
       <ul>
-        {todos.map(todo => (
+        {filteredTodos.map(todo => (
           <li key={todo.id}>
             <input
               type="checkbox"
@@ -61,6 +60,11 @@ const Todo: React.FC = () => {
           </li>
         ))}
       </ul>
+      <div>
+        {filter === 'all' && `Total: ${todos.length}`}
+        {filter === 'active' && `Active: ${todos.filter(todo => !todo.completed).length}`}
+        {filter === 'completed' && `Completed: ${todos.filter(todo => todo.completed).length}`}
+      </div>
     </div>
   );
 };
