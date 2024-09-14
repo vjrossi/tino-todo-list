@@ -12,8 +12,8 @@ export const todoService = {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(todos));
   },
 
-  addTodo: (todos: TodoItem[], text: string): TodoItem[] => {
-    const newTodo: TodoItem = { id: Date.now(), text, completed: false };
+  addTodo: (todos: TodoItem[], text: string, priority: 'low' | 'medium' | 'high'): TodoItem[] => {
+    const newTodo: TodoItem = { id: Date.now(), text, completed: false, priority };
     const updatedTodos = [...todos, newTodo];
     todoService.saveTodos(updatedTodos);
     return updatedTodos;
@@ -33,9 +33,11 @@ export const todoService = {
     return updatedTodos;
   },
 
-  updateTodo: (todos: TodoItem[], id: number, newText: string): TodoItem[] => {
-    return todos.map(todo =>
-      todo.id === id ? { ...todo, text: newText } : todo
+  changePriority: (todos: TodoItem[], id: number, newPriority: 'low' | 'medium' | 'high'): TodoItem[] => {
+    const updatedTodos = todos.map(todo =>
+      todo.id === id ? { ...todo, priority: newPriority } : todo
     );
+    todoService.saveTodos(updatedTodos);
+    return updatedTodos;
   },
 };
