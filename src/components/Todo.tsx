@@ -18,7 +18,8 @@ import {
   TodoDeleteButton,
   TodoSummary,
   PriorityGroup,
-  PriorityTitle
+  PriorityTitle,
+  CompactModeToggle
 } from './TodoStyles';
 
 const Todo: React.FC = () => {
@@ -27,6 +28,7 @@ const Todo: React.FC = () => {
   const [filter, setFilter] = useState<FilterType>('all');
   const [priority, setPriority] = useState<PriorityType>('medium');
   const [editingId, setEditingId] = useState<number | null>(null);
+  const [isCompactMode, setIsCompactMode] = useState(false);
 
   const handleInputKeyPress = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === 'Enter' && inputText.trim() !== '') {
@@ -120,7 +122,9 @@ const Todo: React.FC = () => {
 
   return (
     <TodoContainer>
-      <TodoTitle>Tino's Todo List</TodoTitle>
+      <CompactModeToggle onClick={() => setIsCompactMode(!isCompactMode)}>
+        {isCompactMode ? 'Normal Mode' : 'Compact Mode'}
+      </CompactModeToggle>      <TodoTitle>Tino's Todo List</TodoTitle>
       <TodoInputContainer>
         <TodoInput
           type="text"
@@ -158,6 +162,11 @@ const Todo: React.FC = () => {
                           ref={provided.innerRef}
                           {...provided.draggableProps}
                           {...provided.dragHandleProps}
+                          style={{
+                            ...provided.draggableProps.style,
+                            padding: isCompactMode ? '5px' : '10px',
+                            fontSize: isCompactMode ? '14px' : '16px',
+                          }}
                         >
                           <TodoCheckbox
                             type="checkbox"

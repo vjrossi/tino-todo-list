@@ -80,7 +80,6 @@ export const TodoFilterButton = styled.button<{ active: boolean }>`
 export const TodoList = styled.ul`
   list-style-type: none;
   padding: 0;
-  margin: 0;
 `;
 
 export const TodoListItem = styled.li`
@@ -152,4 +151,44 @@ export const PriorityTitle = styled.h3`
   margin-bottom: 15px;
   border-bottom: 2px solid #f0f0f0;
   padding-bottom: 10px;
+`;
+
+export const CompactModeToggle = styled.button`
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  padding: 5px 10px;
+  font-size: 14px;
+  background-color: #4CAF50;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+
+  &:hover {
+    background-color: #45a049;
+  }
+`;
+
+export const TodoContainerCompact = styled(TodoContainer)`
+  padding: 10px;
+`;
+
+export const TodoListItemCompact = styled(TodoListItem)`
+  padding: 5px;
+  margin-bottom: 4px;
+`;
+
+export const TodoTextCompact = styled(TodoText)`
+  font-size: 14px;
+`;
+
+export const TodoSelectCompact = styled(TodoSelect)`
+  padding: 2px 5px;
+  font-size: 12px;
+`;
+
+export const TodoDeleteButtonCompact = styled(TodoDeleteButton)`
+  padding: 2px 5px;
+  font-size: 12px;
 `;
