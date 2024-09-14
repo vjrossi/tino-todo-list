@@ -43,15 +43,20 @@ const Todo: React.FC = () => {
     setTodos(todoService.changePriority(todos, id, newPriority));
   };
 
-  const filteredTodos = todos.filter(todo => {
-    if (filter === 'active') return !todo.completed;
-    if (filter === 'completed') return todo.completed;
-    return true;
-  });
+  const filteredTodos = todos
+    .filter(todo => {
+      if (filter === 'active') return !todo.completed;
+      if (filter === 'completed') return todo.completed;
+      return true;
+    })
+    .sort((a, b) => {
+      const priorityOrder = { high: 0, medium: 1, low: 2 };
+      return priorityOrder[a.priority] - priorityOrder[b.priority];
+    });
 
   return (
     <TodoContainer>
-      <TodoTitle>Todo List</TodoTitle>
+      <TodoTitle>Tino's Todo List</TodoTitle>
       <TodoInputContainer>
         <TodoInput
           type="text"

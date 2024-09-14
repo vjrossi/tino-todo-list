@@ -100,6 +100,7 @@ export const TodoText = styled.span<{ completed: boolean; priority: PriorityType
 `;
 
 export const TodoDeleteButton = styled.button`
+  margin-left: 10px;
   padding: 5px 10px;
   font-size: 14px;
   background-color: #f44336;
