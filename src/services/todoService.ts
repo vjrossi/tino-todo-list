@@ -4,58 +4,38 @@ const STORAGE_KEY = 'todos';
 
 export const todoService = {
   getTodos: (): TodoItem[] => {
-    try {
-      const savedTodos = localStorage.getItem(STORAGE_KEY);
-      return savedTodos ? JSON.parse(savedTodos) : [];
-    } catch (error) {
-      console.error('Error retrieving todos from localStorage:', error);
-      return [];
-    }
+    const savedTodos = localStorage.getItem(STORAGE_KEY);
+    return savedTodos ? JSON.parse(savedTodos) : [];
   },
 
   saveTodos: (todos: TodoItem[]): void => {
-    try {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(todos));
-    } catch (error) {
-      console.error('Error saving todos to localStorage:', error);
-      // Optionally, you could throw the error here to be handled by the component
-      // throw new Error('Failed to save todos');
-    }
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(todos));
   },
 
   addTodo: (todos: TodoItem[], text: string): TodoItem[] => {
     const newTodo: TodoItem = { id: Date.now(), text, completed: false };
     const updatedTodos = [...todos, newTodo];
-    try {
-      todoService.saveTodos(updatedTodos);
-      return updatedTodos;
-    } catch (error) {
-      console.error('Error adding todo:', error);
-      return todos; // Return original todos if save fails
-    }
+    todoService.saveTodos(updatedTodos);
+    return updatedTodos;
   },
 
   toggleTodo: (todos: TodoItem[], id: number): TodoItem[] => {
     const updatedTodos = todos.map(todo =>
       todo.id === id ? { ...todo, completed: !todo.completed } : todo
     );
-    try {
-      todoService.saveTodos(updatedTodos);
-      return updatedTodos;
-    } catch (error) {
-      console.error('Error toggling todo:', error);
-      return todos; // Return original todos if save fails
-    }
+    todoService.saveTodos(updatedTodos);
+    return updatedTodos;
   },
 
   deleteTodo: (todos: TodoItem[], id: number): TodoItem[] => {
     const updatedTodos = todos.filter(todo => todo.id !== id);
-    try {
-      todoService.saveTodos(updatedTodos);
-      return updatedTodos;
-    } catch (error) {
-      console.error('Error deleting todo:', error);
-      return todos; // Return original todos if save fails
-    }
+    todoService.saveTodos(updatedTodos);
+    return updatedTodos;
+  },
+
+  updateTodo: (todos: TodoItem[], id: number, newText: string): TodoItem[] => {
+    return todos.map(todo =>
+      todo.id === id ? { ...todo, text: newText } : todo
+    );
   },
 };

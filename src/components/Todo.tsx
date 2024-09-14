@@ -8,6 +8,8 @@ const Todo: React.FC = () => {
   const [todos, setTodos] = useState<TodoItem[]>(() => todoService.getTodos());
   const [inputText, setInputText] = useState('');
   const [filter, setFilter] = useState<FilterType>('all');
+  const [editingId, setEditingId] = useState<number | null>(null);
+  const [editText, setEditText] = useState('');
 
   const addTodo = () => {
     if (inputText.trim() !== '') {
@@ -29,6 +31,18 @@ const Todo: React.FC = () => {
     if (filter === 'completed') return todo.completed;
     return true;
   });
+
+  const startEditing = (id: number, text: string) => {
+    setEditingId(id);
+    setEditText(text);
+  };
+
+  const saveEdit = (id: number) => {
+    if (editText.trim() !== '') {
+      setTodos(todoService.updateTodo(todos, id, editText));
+      setEditingId(null);
+    }
+  };
 
   return (
     <div>
@@ -53,9 +67,23 @@ const Todo: React.FC = () => {
               checked={todo.completed}
               onChange={() => toggleTodo(todo.id)}
             />
-            <span style={{ textDecoration: todo.completed ? 'line-through' : 'none' }}>
-              {todo.text}
-            </span>
+            {editingId === todo.id ? (
+              <>
+                <input
+                  type="text"
+                  value={editText}
+                  onChange={(e) => setEditText(e.target.value)}
+                />
+                <button onClick={() => saveEdit(todo.id)}>Save</button>
+              </>
+            ) : (
+              <>
+                <span style={{ textDecoration: todo.completed ? 'line-through' : 'none' }}>
+                  {todo.text}
+                </span>
+                <button onClick={() => startEditing(todo.id, todo.text)}>Edit</button>
+              </>
+            )}
             <button onClick={() => deleteTodo(todo.id)}>Delete</button>
           </li>
         ))}
