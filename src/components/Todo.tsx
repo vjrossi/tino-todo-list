@@ -26,6 +26,7 @@ import {
   CustomDaysButton,
   InputSectionHeading,
   TodoActions,
+  TodoButton,
 } from './TodoStyles';
 
 import DatePicker from 'react-datepicker';
@@ -84,8 +85,11 @@ const Todo: React.FC = () => {
       setTodos(todoService.addTodo(todos, inputText, priority, newDueDate));
       setInputText('');
       setDueDate(null);
-      setSelectedDueDateOption('today');
-      setDaysInput(1);
+      // Only reset selectedDueDateOption if it's not 'custom'
+      if (selectedDueDateOption !== 'custom') {
+        setSelectedDueDateOption('today');
+      }
+      // Don't reset daysInput
     }
   };
 
@@ -177,6 +181,7 @@ const Todo: React.FC = () => {
         break;
       case 'picker':
         // Do nothing here, as the date will be set by the DatePicker component
+        setSelectedDueDateOption(option);
         return;
     }
 
@@ -225,12 +230,16 @@ const Todo: React.FC = () => {
             Friday
           </DueDateButton>
           <DaysInput
+            isActive={selectedDueDateOption === 'custom'}
             value={daysInput}
             onChange={setDaysInput}
-            onCustomClick={() => handleDateButtonClick('custom')}
-            isActive={selectedDueDateOption === 'custom'}
           >
-            <CustomDaysButton active={selectedDueDateOption === 'custom'}>Days</CustomDaysButton>
+            <CustomDaysButton 
+              active={selectedDueDateOption === 'custom'} 
+              onClick={() => handleDateButtonClick('custom')}
+            >
+              Days
+            </CustomDaysButton>
           </DaysInput>
           <DueDateButton active={selectedDueDateOption === 'picker'} onClick={() => setSelectedDueDateOption('picker')}>
             Pick Date
@@ -265,6 +274,7 @@ const Todo: React.FC = () => {
             </PriorityOption>
           ))}
         </PrioritySelector>
+        <TodoButton onClick={addTodo}>Add</TodoButton>
       </TodoInputContainer>
       <TodoFilterContainer id="todo-filter-container">
         <TodoFilterButton id="filter-all" $active={filter === 'all'} onClick={() => setFilter('all')}>All</TodoFilterButton>
@@ -337,7 +347,7 @@ const Todo: React.FC = () => {
                                 {formatDueDate(todo.dueDate)}
                               </TodoDueDate>
                             )}
-                            <TodoDeleteButton onClick={() => deleteTodo(todo.id)}>
+                            <TodoDeleteButton className="delete-button" onClick={() => deleteTodo(todo.id)}>
                               Delete
                             </TodoDeleteButton>
                           </TodoActions>

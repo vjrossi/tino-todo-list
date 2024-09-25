@@ -61,20 +61,14 @@ const DaysSpinnerButton = styled.button`
   }
 `;
 
-const DaysLabel = styled.span`
-  font-size: 14px;
-  margin-left: 5px;
-`;
-
 interface DaysInputProps {
   value: number;
   onChange: (value: number) => void;
-  onCustomClick: () => void;
   isActive: boolean;
   children: React.ReactNode;
 }
 
-export const DaysInput: React.FC<DaysInputProps> = ({ value, onChange, onCustomClick, isActive, children }) => {
+export const DaysInput: React.FC<DaysInputProps> = ({ value, onChange, children }) => {
   const [inputValue, setInputValue] = useState(value.toString());
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -109,7 +103,7 @@ export const DaysInput: React.FC<DaysInputProps> = ({ value, onChange, onCustomC
           <DaysSpinnerButton onClick={handleDecrement}>▼</DaysSpinnerButton>
         </DaysSpinnerContainer>
       </DaysInputWrapper>
-      {React.cloneElement(children as React.ReactElement, { onClick: onCustomClick, active: isActive })}
+      {children}
     </DaysInputContainer>
   );
 };

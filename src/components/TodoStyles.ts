@@ -59,14 +59,16 @@ export const TodoSelect = styled.select`
 export const TodoButton = styled.button`
   padding: 10px 20px;
   font-size: 16px;
-  background-color: #4CAF50;
+  background-color: #3498db;
   color: white;
   border: none;
   border-radius: 4px;
   cursor: pointer;
+  margin-top: 15px;
+  margin-bottom: 15px;
 
   &:hover {
-    background-color: #45a049;
+    background-color: #2980b9;
   }
 `;
 
@@ -81,18 +83,18 @@ export const TodoFilterContainer = styled.div`
 
 export const TodoFilterButton = styled.button<{ $active: boolean }>`
   padding: 10px 20px;
-  background-color: ${props => props.$active ? '#4CAF50' : 'white'};
-  color: ${props => props.$active ? 'white' : 'black'};
-  border: none;
+  background-color: ${props => props.$active ? '#3498db' : 'white'};
+  color: ${props => props.$active ? 'white' : '#34495e'};
+  border: 1px solid #bdc3c7;
   cursor: pointer;
   transition: background-color 0.3s;
 
   &:hover {
-    background-color: ${props => props.$active ? '#45a049' : '#f0f0f0'};
+    background-color: ${props => props.$active ? '#2980b9' : '#ecf0f1'};
   }
 
   &:not(:last-child) {
-    border-right: 1px solid #ccc;
+    border-right: none;
   }
 `;
 
@@ -115,8 +117,11 @@ export const TodoListItem = styled.li`
     border-top: 1px solid #e0e0e0;
   }
 
-  /* Add these new styles */
   justify-content: space-between;
+
+  &:hover .delete-button {
+    opacity: 1;
+  }
 `;
 
 export const TodoCheckbox = styled.input`
@@ -139,6 +144,8 @@ export const TodoDeleteButton = styled.button`
   border: none;
   border-radius: 4px;
   cursor: pointer;
+  opacity: 0;
+  transition: opacity 0.3s ease;
 
   &:hover {
     background-color: #d32f2f;
@@ -178,14 +185,14 @@ export const CompactModeToggle = styled.button`
   right: 10px;
   padding: 5px 10px;
   font-size: 14px;
-  background-color: #4CAF50;
+  background-color: #34495e;
   color: white;
   border: none;
   border-radius: 4px;
   cursor: pointer;
 
   &:hover {
-    background-color: #45a049;
+    background-color: #2c3e50;
   }
 `;
 
@@ -272,15 +279,15 @@ export const DueDateContainer = styled.div`
 export const DueDateButton = styled.button<{ active: boolean }>`
   padding: 8px 12px;
   margin-right: 10px;
-  border: 1px solid #ccc;
-  background-color: ${props => props.active ? '#4CAF50' : 'white'};
-  color: ${props => props.active ? 'white' : 'black'};
+  border: 1px solid #bdc3c7;
+  background-color: ${props => props.active ? '#3498db' : 'white'};
+  color: ${props => props.active ? 'white' : '#34495e'};
   cursor: pointer;
   border-radius: 4px;
   transition: all 0.3s ease;
 
   &:hover {
-    background-color: ${props => props.active ? '#45a049' : '#f0f0f0'};
+    background-color: ${props => props.active ? '#2980b9' : '#ecf0f1'};
   }
 `;
 export const CustomDaysButton = styled(DueDateButton)`
