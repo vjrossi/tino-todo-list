@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { DragDropContext, Droppable, Draggable, DropResult } from 'react-beautiful-dnd';
 import { todoService } from '../services/todoService';
-import { TodoItem, FilterType, PriorityType } from '../types/todo';
+import { TodoItem, FilterType, PriorityType } from '../types/todoItem';
 import {
   TodoContainer,
   TodoTitle,
@@ -49,10 +49,6 @@ const Todo: React.FC = () => {
 
   const deleteTodo = (id: number) => {
     setTodos(todoService.deleteTodo(todos, id));
-  };
-
-  const changePriority = (id: number, newPriority: PriorityType) => {
-    setTodos(todoService.changePriority(todos, id, newPriority));
   };
 
   const startEditing = (id: number) => {
@@ -201,14 +197,6 @@ const Todo: React.FC = () => {
                               todo.text
                             )}
                           </TodoText>
-                          <TodoSelect
-                            value={todo.priority}
-                            onChange={(e) => changePriority(todo.id, e.target.value as PriorityType)}
-                          >
-                            <option value="low">Low</option>
-                            <option value="medium">Medium</option>
-                            <option value="high">High</option>
-                          </TodoSelect>
                           <TodoDeleteButton onClick={() => deleteTodo(todo.id)}>
                             Delete
                           </TodoDeleteButton>

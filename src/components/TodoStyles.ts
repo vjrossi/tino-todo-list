@@ -1,5 +1,5 @@
 import styled from 'styled-components';
-import { PriorityType } from '../types/todo';
+import { PriorityType } from '../types/todoItem';
 
 export const TodoContainer = styled.div`
   max-width: 600px;

@@ -1,4 +1,4 @@
-import { TodoItem, PriorityType } from '../types/todo';
+import { TodoItem, PriorityType } from '../types/todoItem';
 
 const STORAGE_KEY = 'todos';
 
@@ -35,14 +35,6 @@ export const todoService = {
 
   deleteTodo: (todos: TodoItem[], id: number): TodoItem[] => {
     const updatedTodos = todos.filter(todo => todo.id !== id);
-    todoService.saveTodos(updatedTodos);
-    return updatedTodos;
-  },
-
-  changePriority: (todos: TodoItem[], id: number, newPriority: PriorityType): TodoItem[] => {
-    const updatedTodos = todos.map(todo =>
-      todo.id === id ? { ...todo, priority: newPriority } : todo
-    );
     todoService.saveTodos(updatedTodos);
     return updatedTodos;
   },
