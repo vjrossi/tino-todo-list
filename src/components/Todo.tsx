@@ -22,19 +22,15 @@ import {
   PrioritySelector,
   TodoDueDate,
   DueDateContainer,
-  DaysInputContainer,
-  DaysInput,
   DueDateButton,
   CustomDaysButton,
-  DaysSpinnerButton,
-  DaysSpinnerContainer,
-  DaysInputField,
   InputSectionHeading,
   TodoActions,
 } from './TodoStyles';
 
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
+import { DaysInput } from './DaysInput';
 
 const getDaysUntilDue = (dueDate: Date): number => {
   const now = new Date();
@@ -50,10 +46,11 @@ const formatDueDate = (dueDate: Date): string => {
 
   if (daysUntilDue === 0) return 'Today';
   if (daysUntilDue === 1) return 'Tomorrow';
-  if (daysUntilDue > 1 && daysUntilDue <= 7) return `In ${daysUntilDue} days`;
+  if (daysUntilDue === 2) return 'Day after tomorrow';
+  if (daysUntilDue > 2 && daysUntilDue <= 7) return `In ${daysUntilDue} days`;
   if (daysUntilDue > 7 && daysUntilDue <= 30) return `In ${Math.ceil(daysUntilDue / 7)} weeks`;
   if (daysUntilDue > 30 && daysUntilDue <= 365) return `In ${Math.ceil(daysUntilDue / 30)} months`;
-  
+
   return dueDate.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
 };
 
@@ -76,9 +73,19 @@ const Todo: React.FC = () => {
 
   const addTodo = () => {
     if (inputText.trim() !== '') {
-      setTodos(todoService.addTodo(todos, inputText, priority, dueDate));
+      let newDueDate = dueDate;
+      if (selectedDueDateOption === 'custom') {
+        const today = new Date();
+        newDueDate = new Date(today.setDate(today.getDate() + daysInput));
+      }
+      if (newDueDate) {
+        newDueDate.setHours(23, 59, 59, 999);
+      }
+      setTodos(todoService.addTodo(todos, inputText, priority, newDueDate));
       setInputText('');
-      handleDateButtonClick(selectedDueDateOption);
+      setDueDate(null);
+      setSelectedDueDateOption('today');
+      setDaysInput(1);
     }
   };
 
@@ -154,7 +161,7 @@ const Todo: React.FC = () => {
 
     switch (option) {
       case 'today':
-        newDate = today;
+        newDate = new Date(today);
         break;
       case 'tomorrow':
         newDate = new Date(today);
@@ -217,34 +224,14 @@ const Todo: React.FC = () => {
           <DueDateButton active={selectedDueDateOption === 'friday'} onClick={() => handleDateButtonClick('friday')}>
             Friday
           </DueDateButton>
-          <DaysInputContainer>
-            <DaysInput>
-              <DaysInputField
-                type="number"
-                min="1"
-                max="365"
-                value={daysInput}
-                onChange={(e) => {
-                  const value = Math.max(1, Math.min(365, parseInt(e.target.value, 10) || 1));
-                  setDaysInput(value);
-                  if (selectedDueDateOption === 'custom') {
-                    handleDateButtonClick('custom');
-                  }
-                }}
-              />
-              <DaysSpinnerContainer>
-                <DaysSpinnerButton onClick={() => setDaysInput(prev => Math.min(prev + 1, 365))}>
-                  ▴
-                </DaysSpinnerButton>
-                <DaysSpinnerButton onClick={() => setDaysInput(prev => Math.max(prev - 1, 1))}>
-                  ▾
-                </DaysSpinnerButton>
-              </DaysSpinnerContainer>
-            </DaysInput>
-            <CustomDaysButton active={selectedDueDateOption === 'custom'} onClick={() => handleDateButtonClick('custom')}>
-              Days
-            </CustomDaysButton>
-          </DaysInputContainer>
+          <DaysInput
+            value={daysInput}
+            onChange={setDaysInput}
+            onCustomClick={() => handleDateButtonClick('custom')}
+            isActive={selectedDueDateOption === 'custom'}
+          >
+            <CustomDaysButton active={selectedDueDateOption === 'custom'}>Days</CustomDaysButton>
+          </DaysInput>
           <DueDateButton active={selectedDueDateOption === 'picker'} onClick={() => setSelectedDueDateOption('picker')}>
             Pick Date
           </DueDateButton>

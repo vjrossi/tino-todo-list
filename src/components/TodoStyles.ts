@@ -73,21 +73,26 @@ export const TodoButton = styled.button`
 export const TodoFilterContainer = styled.div`
   display: flex;
   justify-content: center;
-  margin-bottom: 20px;
+  margin-bottom: 2px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  overflow: hidden;
 `;
 
 export const TodoFilterButton = styled.button<{ $active: boolean }>`
   padding: 10px 20px;
-  font-size: 16px;
-  background-color: ${props => props.$active ? '#4CAF50' : '#f1f1f1'};
+  background-color: ${props => props.$active ? '#4CAF50' : 'white'};
   color: ${props => props.$active ? 'white' : 'black'};
   border: none;
-  border-radius: 4px;
   cursor: pointer;
-  margin: 0 5px;
+  transition: background-color 0.3s;
 
   &:hover {
-    background-color: ${props => props.$active ? '#45a049' : '#ddd'};
+    background-color: ${props => props.$active ? '#45a049' : '#f0f0f0'};
+  }
+
+  &:not(:last-child) {
+    border-right: 1px solid #ccc;
   }
 `;
 
@@ -249,100 +254,13 @@ export const TodoDueDate = styled.span<{ $daysUntilDue: number }>`
     props.$daysUntilDue === 0 ? '#e74c3c' :
     props.$daysUntilDue === 1 ? '#f39c12' :
     props.$daysUntilDue <= 7 ? '#3498db' :
-    '#2ecc71'};
+    '#2ecc71'
+  };
   padding: 3px 8px;
   border-radius: 12px;
   margin-left: 10px;
   font-weight: bold;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
-  position: relative;
-  cursor: default;
-
-  &::after {
-    content: attr(data-tooltip);
-    position: absolute;
-    bottom: 125%;
-    left: 50%;
-    transform: translateX(-50%);
-    background-color: #333;
-    color: #fff;
-    padding: 5px 10px;
-    border-radius: 4px;
-    font-size: 12px;
-    white-space: nowrap;
-    opacity: 0;
-    visibility: hidden;
-    transition: opacity 0.3s, visibility 0.3s;
-  }
-
-  &:hover::after {
-    opacity: 1;
-    visibility: visible;
-  }
-`;
-
-export const DaysInputContainer = styled.div`
-  display: flex;
-  align-items: center;
-  margin-right: 10px;
-`;
-
-export const DaysInput = styled.div`
-  display: inline-flex;
-  align-items: center;
-  border: 1px solid #ccc;
-  border-radius: 4px;
-  overflow: hidden;
-   height: 32px;
-`;
-
-export const DaysInputField = styled.input`
-  width: 30px;
-  border: none;
-  text-align: center;
-  font-size: 14px;
-  padding: 0;
-  -moz-appearance: textfield;
-  &::-webkit-outer-spin-button,
-  &::-webkit-inner-spin-button {
-    -webkit-appearance: none;
-    margin: 0;
-  }
-`;
-
-export const DaysSpinnerContainer = styled.div`
-  display: flex;
-  flex-direction: column;
-  height: 100%;
-`;
-
-export const DaysSpinnerButton = styled.button`
-  width: 18px;
-  height: 16px;
-  background-color: transparent;
-  border: none;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 12px;
-  color: #aaa;
-  padding: 0;
-  transition: color 0.2s, background-color 0.2s;
-
-  &:hover {
-    color: #666;
-    background-color: #f0f0f0;
-  }
-
-  &:active {
-    color: #333;
-    background-color: #e0e0e0;
-  }
-`;
-
-export const DaysLabel = styled.span`
-  font-size: 14px;
 `;
 
 export const DueDateContainer = styled.div`
