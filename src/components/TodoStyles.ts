@@ -57,6 +57,7 @@ export const TodoSelect = styled.select`
 `;
 
 export const TodoButton = styled.button`
+  max-width: 30%;
   padding: 10px 20px;
   font-size: 16px;
   background-color: #3498db;
@@ -65,7 +66,6 @@ export const TodoButton = styled.button`
   border-radius: 4px;
   cursor: pointer;
   margin-top: 15px;
-  margin-bottom: 15px;
 
   &:hover {
     background-color: #2980b9;
