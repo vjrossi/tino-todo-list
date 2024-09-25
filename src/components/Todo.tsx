@@ -7,7 +7,6 @@ import {
   TodoTitle,
   TodoInputContainer,
   TodoInput,
-  TodoButton,
   TodoFilterContainer,
   TodoFilterButton,
   TodoList,
@@ -25,15 +24,31 @@ import {
   DueDateContainer,
   DaysInputContainer,
   DaysInput,
-  DaysLabel,
   DueDateButton,
   CustomDaysButton,
   DaysSpinnerButton,
   DaysSpinnerContainer,
-  DaysInputField
+  DaysInputField,
+  InputSectionHeading,
+  TodoActions,
 } from './TodoStyles';
 
-import DueDateSelector from './DueDateSelector';
+import DatePicker from 'react-datepicker';
+import 'react-datepicker/dist/react-datepicker.css';
+
+const formatDueDate = (dueDate: Date): string => {
+  const now = new Date();
+  const diffTime = dueDate.getTime() - now.getTime();
+  const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+
+  if (diffDays === 0) return 'Today';
+  if (diffDays === 1) return 'Tomorrow';
+  if (diffDays > 1 && diffDays <= 7) return `In ${diffDays} days`;
+  if (diffDays > 7 && diffDays <= 30) return `In ${Math.ceil(diffDays / 7)} weeks`;
+  if (diffDays > 30 && diffDays <= 365) return `In ${Math.ceil(diffDays / 30)} months`;
+  
+  return dueDate.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+};
 
 const Todo: React.FC = () => {
   const [todos, setTodos] = useState<TodoItem[]>(() => todoService.getTodos());
@@ -126,28 +141,6 @@ const Todo: React.FC = () => {
     low: filteredTodos.filter(todo => todo.priority === 'low'),
   };
 
-  const isToday = (date: Date | null) => {
-    if (!date) return false;
-    const today = new Date();
-    return date.getDate() === today.getDate() &&
-      date.getMonth() === today.getMonth() &&
-      date.getFullYear() === today.getFullYear();
-  };
-
-  const isTomorrow = (date: Date | null) => {
-    if (!date) return false;
-    const tomorrow = new Date();
-    tomorrow.setDate(tomorrow.getDate() + 1);
-    return date.getDate() === tomorrow.getDate() &&
-      date.getMonth() === tomorrow.getMonth() &&
-      date.getFullYear() === tomorrow.getFullYear();
-  };
-
-  const isFriday = (date: Date | null) => {
-    if (!date) return false;
-    return date.getDay() === 5;
-  };
-
   const handleDateButtonClick = (option: string) => {
     let newDate: Date | null = null;
     const today = new Date();
@@ -168,6 +161,9 @@ const Todo: React.FC = () => {
         newDate = new Date(today);
         newDate.setDate(today.getDate() + daysInput);
         break;
+      case 'picker':
+        // Do nothing here, as the date will be set by the DatePicker component
+        return;
     }
 
     if (newDate) {
@@ -178,6 +174,12 @@ const Todo: React.FC = () => {
     setSelectedDueDateOption(option);
   };
 
+  const getDaysUntilDue = (dueDate: Date): number => {
+    const now = new Date();
+    const diffTime = dueDate.getTime() - now.getTime();
+    return Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+  };
+
   return (
     <TodoContainer id="todo-container">
       <CompactModeToggle id="compact-mode-toggle" onClick={() => setIsCompactMode(!isCompactMode)}>
@@ -185,6 +187,7 @@ const Todo: React.FC = () => {
       </CompactModeToggle>
       <TodoTitle id="todo-title">Tino's Todo List</TodoTitle>
       <TodoInputContainer>
+        <InputSectionHeading>Task Details</InputSectionHeading>
         <TodoInput
           id="todo-input"
           type="text"
@@ -193,6 +196,7 @@ const Todo: React.FC = () => {
           onKeyPress={handleInputKeyPress}
           placeholder="Add a new todo and press Enter"
         />
+        <InputSectionHeading>Due Date</InputSectionHeading>
         <DueDateContainer>
           <DueDateButton active={selectedDueDateOption === 'today'} onClick={() => handleDateButtonClick('today')}>
             Today
@@ -231,7 +235,24 @@ const Todo: React.FC = () => {
               Days
             </CustomDaysButton>
           </DaysInputContainer>
+          <DueDateButton active={selectedDueDateOption === 'picker'} onClick={() => setSelectedDueDateOption('picker')}>
+            Pick Date
+          </DueDateButton>
         </DueDateContainer>
+        {selectedDueDateOption === 'picker' && (
+          <DatePicker
+            selected={dueDate}
+            onChange={(date: Date | null) => {
+              if (date) {
+                setDueDate(date);
+                setSelectedDueDateOption('picker');
+              }
+            }}
+            minDate={new Date()}
+            inline
+          />
+        )}
+        <InputSectionHeading>Priority</InputSectionHeading>
         <PrioritySelector>
           {['low', 'medium', 'high'].map((p) => (
             <PriorityOption key={p}>
@@ -249,15 +270,15 @@ const Todo: React.FC = () => {
         </PrioritySelector>
       </TodoInputContainer>
       <TodoFilterContainer id="todo-filter-container">
-        <TodoFilterButton id="filter-all" active={filter === 'all'} onClick={() => setFilter('all')}>All</TodoFilterButton>
-        <TodoFilterButton id="filter-active" active={filter === 'active'} onClick={() => setFilter('active')}>Active</TodoFilterButton>
-        <TodoFilterButton id="filter-completed" active={filter === 'completed'} onClick={() => setFilter('completed')}>Completed</TodoFilterButton>
+        <TodoFilterButton id="filter-all" $active={filter === 'all'} onClick={() => setFilter('all')}>All</TodoFilterButton>
+        <TodoFilterButton id="filter-active" $active={filter === 'active'} onClick={() => setFilter('active')}>Active</TodoFilterButton>
+        <TodoFilterButton id="filter-completed" $active={filter === 'completed'} onClick={() => setFilter('completed')}>Completed</TodoFilterButton>
       </TodoFilterContainer>
       <DragDropContext onDragEnd={onDragEnd}>
         {Object.entries(groupedTodos).map(([priority, todos]) => (
           <PriorityGroup key={priority}>
             <PriorityTitle>{priority.charAt(0).toUpperCase() + priority.slice(1)} Priority</PriorityTitle>
-            <Droppable droppableId={priority}>
+            <Droppable droppableId={priority} key={priority}>
               {(provided) => (
                 <TodoList {...provided.droppableProps} ref={provided.innerRef}>
                   {todos.map((todo, index) => (
@@ -279,7 +300,7 @@ const Todo: React.FC = () => {
                             onChange={() => toggleTodo(todo.id)}
                           />
                           <TodoText
-                            completed={todo.completed}
+                            $completed={todo.completed}
                             priority={todo.priority}
                             onClick={() => startEditing(todo.id)}
                           >
@@ -310,14 +331,19 @@ const Todo: React.FC = () => {
                               todo.text
                             )}
                           </TodoText>
-                          {todo.dueDate && (
-                            <TodoDueDate>
-                              Due: {new Date(todo.dueDate).toLocaleDateString()}
-                            </TodoDueDate>
-                          )}
-                          <TodoDeleteButton onClick={() => deleteTodo(todo.id)}>
-                            Delete
-                          </TodoDeleteButton>
+                          <TodoActions>
+                            {todo.dueDate && (
+                              <TodoDueDate 
+                                $daysUntilDue={getDaysUntilDue(todo.dueDate)}
+                                data-tooltip={todo.dueDate.toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}
+                              >
+                                {formatDueDate(todo.dueDate)}
+                              </TodoDueDate>
+                            )}
+                            <TodoDeleteButton onClick={() => deleteTodo(todo.id)}>
+                              Delete
+                            </TodoDeleteButton>
+                          </TodoActions>
                         </TodoListItem>
                       )}
                     </Draggable>

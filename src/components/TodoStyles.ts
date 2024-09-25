@@ -1,6 +1,19 @@
 import styled from 'styled-components';
 import { PriorityType } from '../types/todoItem';
 
+const getColorForPriority = (priority: PriorityType): string => {
+  switch (priority) {
+    case 'high':
+      return '#ff4d4d';
+    case 'medium':
+      return '#ffa64d';
+    case 'low':
+      return '#4da6ff';
+    default:
+      return 'black';
+  }
+};
+
 export const TodoContainer = styled.div`
   max-width: 600px;
   margin: 0 auto;
@@ -63,18 +76,18 @@ export const TodoFilterContainer = styled.div`
   margin-bottom: 20px;
 `;
 
-export const TodoFilterButton = styled.button<{ active: boolean }>`
+export const TodoFilterButton = styled.button<{ $active: boolean }>`
   padding: 10px 20px;
   font-size: 16px;
-  background-color: ${props => props.active ? '#4CAF50' : '#f1f1f1'};
-  color: ${props => props.active ? 'white' : 'black'};
+  background-color: ${props => props.$active ? '#4CAF50' : '#f1f1f1'};
+  color: ${props => props.$active ? 'white' : 'black'};
   border: none;
   border-radius: 4px;
   cursor: pointer;
   margin: 0 5px;
 
   &:hover {
-    background-color: ${props => props.active ? '#45a049' : '#ddd'};
+    background-color: ${props => props.$active ? '#45a049' : '#ddd'};
   }
 `;
 
@@ -96,6 +109,9 @@ export const TodoListItem = styled.li`
   &:first-child {
     border-top: 1px solid #e0e0e0;
   }
+
+  /* Add these new styles */
+  justify-content: space-between;
 `;
 
 export const TodoCheckbox = styled.input`
@@ -103,14 +119,11 @@ export const TodoCheckbox = styled.input`
   transform: scale(1.2);
 `;
 
-export const TodoText = styled.span<{ completed: boolean; priority: PriorityType }>`
+export const TodoText = styled.span<{ $completed: boolean; priority: PriorityType }>`
   flex-grow: 1;
-  margin-right: 15px;
-  text-decoration: ${props => props.completed ? 'line-through' : 'none'};
-  color: ${props => props.completed ? '#888' :
-    props.priority === 'high' ? 'red' :
-      props.priority === 'medium' ? 'orange' : 'green'};
-  cursor: pointer;
+  text-align: left;
+  text-decoration: ${props => props.$completed ? 'line-through' : 'none'};
+  color: ${props => props.$completed ? '#888' : getColorForPriority(props.priority)};
 `;
 
 export const TodoDeleteButton = styled.button`
@@ -229,10 +242,20 @@ export const PriorityOption = styled.div`
   }
 `;
 
-export const TodoDueDate = styled.span`
+export const TodoDueDate = styled.span<{ $daysUntilDue: number }>`
   font-size: 12px;
-  color: #888;
+  color: #fff;
+  background-color: ${props => 
+    props.$daysUntilDue === 0 ? '#e74c3c' :
+    props.$daysUntilDue === 1 ? '#f39c12' :
+    props.$daysUntilDue <= 7 ? '#3498db' :
+    '#2ecc71'
+  };
+  padding: 3px 8px;
+  border-radius: 12px;
   margin-left: 10px;
+  font-weight: bold;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
 `;
 
 export const DaysInputContainer = styled.div`
@@ -325,3 +348,19 @@ export const CustomDaysButton = styled(DueDateButton)`
   margin-left: -1px;
 `;
 
+export const DatePickerContainer = styled.div`
+  margin-top: 10px;
+`;
+
+export const InputSectionHeading = styled.h3`
+  font-size: 16px;
+  color: #333;
+  margin-top: 15px;
+  margin-bottom: 10px;
+`;
+
+export const TodoActions = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 10px;
+`;
