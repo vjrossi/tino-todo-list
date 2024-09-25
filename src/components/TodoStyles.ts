@@ -27,6 +27,7 @@ export const TodoInputContainer = styled.div`
 `;
 
 export const TodoInput = styled.input`
+  flex-grow: 1;
   padding: 12px;
   font-size: 16px;
   border: 1px solid #ddd;
@@ -106,9 +107,9 @@ export const TodoText = styled.span<{ completed: boolean; priority: PriorityType
   flex-grow: 1;
   margin-right: 15px;
   text-decoration: ${props => props.completed ? 'line-through' : 'none'};
-  color: ${props => props.completed ? '#888' : 
+  color: ${props => props.completed ? '#888' :
     props.priority === 'high' ? 'red' :
-    props.priority === 'medium' ? 'orange' : 'green'};
+      props.priority === 'medium' ? 'orange' : 'green'};
   cursor: pointer;
 `;
 
@@ -202,22 +203,20 @@ export const PrioritySelector = styled.div`
 `;
 
 export const PriorityOption = styled.div`
-  display: flex;
-  align-items: center;
   flex: 1;
+  text-align: center;
 
   input[type="radio"] {
     display: none;
   }
 
   label {
+    display: block;
     cursor: pointer;
     padding: 8px 12px;
-    border-radius: 3px;
+    border-radius: 4px;
     font-size: 14px;
     transition: all 0.3s ease;
-    text-align: center;
-    width: 100%;
   }
 
   input[type="radio"]:checked + label {
@@ -236,32 +235,93 @@ export const TodoDueDate = styled.span`
   margin-left: 10px;
 `;
 
+export const DaysInputContainer = styled.div`
+  display: flex;
+  align-items: center;
+  margin-right: 10px;
+`;
+
+export const DaysInput = styled.div`
+  display: inline-flex;
+  align-items: center;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  overflow: hidden;
+   height: 32px;
+`;
+
+export const DaysInputField = styled.input`
+  width: 30px;
+  border: none;
+  text-align: center;
+  font-size: 14px;
+  padding: 0;
+  -moz-appearance: textfield;
+  &::-webkit-outer-spin-button,
+  &::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+  }
+`;
+
+export const DaysSpinnerContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+`;
+
+export const DaysSpinnerButton = styled.button`
+  width: 18px;
+  height: 16px;
+  background-color: transparent;
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  color: #aaa;
+  padding: 0;
+  transition: color 0.2s, background-color 0.2s;
+
+  &:hover {
+    color: #666;
+    background-color: #f0f0f0;
+  }
+
+  &:active {
+    color: #333;
+    background-color: #e0e0e0;
+  }
+`;
+
+export const DaysLabel = styled.span`
+  font-size: 14px;
+`;
+
 export const DueDateContainer = styled.div`
   display: flex;
-  justify-content: space-between;
+  align-items: center;
   margin-bottom: 15px;
 `;
 
 export const DueDateButton = styled.button<{ active: boolean }>`
   padding: 8px 12px;
-  border: 1px solid #ddd;
+  margin-right: 10px;
+  border: 1px solid #ccc;
   background-color: ${props => props.active ? '#4CAF50' : 'white'};
   color: ${props => props.active ? 'white' : 'black'};
   cursor: pointer;
   border-radius: 4px;
-  flex: 1;
-  margin: 0 5px;
   transition: all 0.3s ease;
-
-  &:first-child {
-    margin-left: 0;
-  }
-
-  &:last-child {
-    margin-right: 0;
-  }
 
   &:hover {
     background-color: ${props => props.active ? '#45a049' : '#f0f0f0'};
   }
 `;
+export const CustomDaysButton = styled(DueDateButton)`
+  border-radius: 0 4px 4px 0;
+  margin-right: 0;
+  margin-left: -1px;
+`;
+

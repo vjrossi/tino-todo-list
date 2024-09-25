@@ -7,7 +7,6 @@ import {
   TodoTitle,
   TodoInputContainer,
   TodoInput,
-  TodoSelect,
   TodoButton,
   TodoFilterContainer,
   TodoFilterButton,
@@ -24,8 +23,16 @@ import {
   PrioritySelector,
   TodoDueDate,
   DueDateContainer,
-  DueDateButton
+  DaysInputContainer,
+  DaysInput,
+  DaysLabel,
+  DueDateButton,
+  CustomDaysButton,
+  DaysSpinnerButton,
+  DaysSpinnerContainer,
+  DaysInputField
 } from './TodoStyles';
+
 import DueDateSelector from './DueDateSelector';
 
 const Todo: React.FC = () => {
@@ -36,6 +43,8 @@ const Todo: React.FC = () => {
   const [editingId, setEditingId] = useState<number | null>(null);
   const [isCompactMode, setIsCompactMode] = useState(false);
   const [dueDate, setDueDate] = useState<Date | null>(null);
+  const [daysInput, setDaysInput] = useState<number>(1);
+  const [selectedDueDateOption, setSelectedDueDateOption] = useState<string>('today');
 
   const handleInputKeyPress = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === 'Enter' && inputText.trim() !== '') {
@@ -47,7 +56,7 @@ const Todo: React.FC = () => {
     if (inputText.trim() !== '') {
       setTodos(todoService.addTodo(todos, inputText, priority, dueDate));
       setInputText('');
-      setDueDate(null);
+      handleDateButtonClick(selectedDueDateOption);
     }
   };
 
@@ -141,26 +150,32 @@ const Todo: React.FC = () => {
 
   const handleDateButtonClick = (option: string) => {
     let newDate: Date | null = null;
+    const today = new Date();
+
     switch (option) {
       case 'today':
-        newDate = new Date();
+        newDate = today;
         break;
       case 'tomorrow':
-        newDate = new Date();
-        newDate.setDate(newDate.getDate() + 1);
+        newDate = new Date(today);
+        newDate.setDate(today.getDate() + 1);
         break;
       case 'friday':
-        newDate = new Date();
-        newDate.setDate(newDate.getDate() + ((5 + 7 - newDate.getDay()) % 7));
+        newDate = new Date(today);
+        newDate.setDate(today.getDate() + ((5 + 7 - today.getDay()) % 7));
         break;
       case 'custom':
-        // Implement custom date picker logic here
+        newDate = new Date(today);
+        newDate.setDate(today.getDate() + daysInput);
         break;
     }
+
     if (newDate) {
       newDate.setHours(23, 59, 59, 999);
     }
+
     setDueDate(newDate);
+    setSelectedDueDateOption(option);
   };
 
   return (
@@ -179,18 +194,43 @@ const Todo: React.FC = () => {
           placeholder="Add a new todo and press Enter"
         />
         <DueDateContainer>
-          <DueDateButton active={isToday(dueDate)} onClick={() => handleDateButtonClick('today')}>
+          <DueDateButton active={selectedDueDateOption === 'today'} onClick={() => handleDateButtonClick('today')}>
             Today
           </DueDateButton>
-          <DueDateButton active={isTomorrow(dueDate)} onClick={() => handleDateButtonClick('tomorrow')}>
+          <DueDateButton active={selectedDueDateOption === 'tomorrow'} onClick={() => handleDateButtonClick('tomorrow')}>
             Tomorrow
           </DueDateButton>
-          <DueDateButton active={isFriday(dueDate)} onClick={() => handleDateButtonClick('friday')}>
+          <DueDateButton active={selectedDueDateOption === 'friday'} onClick={() => handleDateButtonClick('friday')}>
             Friday
           </DueDateButton>
-          <DueDateButton active={false} onClick={() => handleDateButtonClick('custom')}>
-            In x days
-          </DueDateButton>
+          <DaysInputContainer>
+            <DaysInput>
+              <DaysInputField
+                type="number"
+                min="1"
+                max="365"
+                value={daysInput}
+                onChange={(e) => {
+                  const value = Math.max(1, Math.min(365, parseInt(e.target.value, 10) || 1));
+                  setDaysInput(value);
+                  if (selectedDueDateOption === 'custom') {
+                    handleDateButtonClick('custom');
+                  }
+                }}
+              />
+              <DaysSpinnerContainer>
+                <DaysSpinnerButton onClick={() => setDaysInput(prev => Math.min(prev + 1, 365))}>
+                  ▴
+                </DaysSpinnerButton>
+                <DaysSpinnerButton onClick={() => setDaysInput(prev => Math.max(prev - 1, 1))}>
+                  ▾
+                </DaysSpinnerButton>
+              </DaysSpinnerContainer>
+            </DaysInput>
+            <CustomDaysButton active={selectedDueDateOption === 'custom'} onClick={() => handleDateButtonClick('custom')}>
+              Days
+            </CustomDaysButton>
+          </DaysInputContainer>
         </DueDateContainer>
         <PrioritySelector>
           {['low', 'medium', 'high'].map((p) => (
