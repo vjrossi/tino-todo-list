@@ -36,16 +36,23 @@ import {
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 
-const formatDueDate = (dueDate: Date): string => {
+const getDaysUntilDue = (dueDate: Date): number => {
   const now = new Date();
-  const diffTime = dueDate.getTime() - now.getTime();
-  const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+  now.setHours(0, 0, 0, 0);
+  const dueDateCopy = new Date(dueDate);
+  dueDateCopy.setHours(0, 0, 0, 0);
+  const diffTime = dueDateCopy.getTime() - now.getTime();
+  return Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+};
 
-  if (diffDays === 0) return 'Today';
-  if (diffDays === 1) return 'Tomorrow';
-  if (diffDays > 1 && diffDays <= 7) return `In ${diffDays} days`;
-  if (diffDays > 7 && diffDays <= 30) return `In ${Math.ceil(diffDays / 7)} weeks`;
-  if (diffDays > 30 && diffDays <= 365) return `In ${Math.ceil(diffDays / 30)} months`;
+const formatDueDate = (dueDate: Date): string => {
+  const daysUntilDue = getDaysUntilDue(dueDate);
+
+  if (daysUntilDue === 0) return 'Today';
+  if (daysUntilDue === 1) return 'Tomorrow';
+  if (daysUntilDue > 1 && daysUntilDue <= 7) return `In ${daysUntilDue} days`;
+  if (daysUntilDue > 7 && daysUntilDue <= 30) return `In ${Math.ceil(daysUntilDue / 7)} weeks`;
+  if (daysUntilDue > 30 && daysUntilDue <= 365) return `In ${Math.ceil(daysUntilDue / 30)} months`;
   
   return dueDate.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
 };
@@ -176,7 +183,10 @@ const Todo: React.FC = () => {
 
   const getDaysUntilDue = (dueDate: Date): number => {
     const now = new Date();
-    const diffTime = dueDate.getTime() - now.getTime();
+    now.setHours(0, 0, 0, 0);
+    const dueDateCopy = new Date(dueDate);
+    dueDateCopy.setHours(0, 0, 0, 0);
+    const diffTime = dueDateCopy.getTime() - now.getTime();
     return Math.ceil(diffTime / (1000 * 60 * 60 * 24));
   };
 
@@ -333,7 +343,7 @@ const Todo: React.FC = () => {
                           </TodoText>
                           <TodoActions>
                             {todo.dueDate && (
-                              <TodoDueDate 
+                              <TodoDueDate
                                 $daysUntilDue={getDaysUntilDue(todo.dueDate)}
                                 data-tooltip={todo.dueDate.toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}
                               >

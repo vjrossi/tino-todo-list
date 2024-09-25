@@ -249,13 +249,36 @@ export const TodoDueDate = styled.span<{ $daysUntilDue: number }>`
     props.$daysUntilDue === 0 ? '#e74c3c' :
     props.$daysUntilDue === 1 ? '#f39c12' :
     props.$daysUntilDue <= 7 ? '#3498db' :
-    '#2ecc71'
-  };
+    '#2ecc71'};
   padding: 3px 8px;
   border-radius: 12px;
   margin-left: 10px;
   font-weight: bold;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+  position: relative;
+  cursor: default;
+
+  &::after {
+    content: attr(data-tooltip);
+    position: absolute;
+    bottom: 125%;
+    left: 50%;
+    transform: translateX(-50%);
+    background-color: #333;
+    color: #fff;
+    padding: 5px 10px;
+    border-radius: 4px;
+    font-size: 12px;
+    white-space: nowrap;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.3s, visibility 0.3s;
+  }
+
+  &:hover::after {
+    opacity: 1;
+    visibility: visible;
+  }
 `;
 
 export const DaysInputContainer = styled.div`
