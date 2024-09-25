@@ -18,20 +18,20 @@ export const TodoTitle = styled.h1`
 
 export const TodoInputContainer = styled.div`
   display: flex;
+  flex-direction: column;
   margin-bottom: 20px;
   background-color: white;
-  padding: 10px;
-  border-radius: 5px;
+  padding: 20px;
+  border-radius: 8px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 `;
 
 export const TodoInput = styled.input`
-  flex-grow: 1;
-  padding: 10px;
+  padding: 12px;
   font-size: 16px;
   border: 1px solid #ddd;
   border-radius: 4px;
-  margin-right: 10px;
+  margin-bottom: 15px;
 `;
 
 export const TodoSelect = styled.select`
@@ -191,4 +191,77 @@ export const TodoSelectCompact = styled(TodoSelect)`
 export const TodoDeleteButtonCompact = styled(TodoDeleteButton)`
   padding: 2px 5px;
   font-size: 12px;
+`;
+
+export const PrioritySelector = styled.div`
+  display: flex;
+  justify-content: space-between;
+  background-color: #f0f0f0;
+  border-radius: 4px;
+  padding: 5px;
+`;
+
+export const PriorityOption = styled.div`
+  display: flex;
+  align-items: center;
+  flex: 1;
+
+  input[type="radio"] {
+    display: none;
+  }
+
+  label {
+    cursor: pointer;
+    padding: 8px 12px;
+    border-radius: 3px;
+    font-size: 14px;
+    transition: all 0.3s ease;
+    text-align: center;
+    width: 100%;
+  }
+
+  input[type="radio"]:checked + label {
+    background-color: #4CAF50;
+    color: white;
+  }
+
+  &:hover label {
+    background-color: #e0e0e0;
+  }
+`;
+
+export const TodoDueDate = styled.span`
+  font-size: 12px;
+  color: #888;
+  margin-left: 10px;
+`;
+
+export const DueDateContainer = styled.div`
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 15px;
+`;
+
+export const DueDateButton = styled.button<{ active: boolean }>`
+  padding: 8px 12px;
+  border: 1px solid #ddd;
+  background-color: ${props => props.active ? '#4CAF50' : 'white'};
+  color: ${props => props.active ? 'white' : 'black'};
+  cursor: pointer;
+  border-radius: 4px;
+  flex: 1;
+  margin: 0 5px;
+  transition: all 0.3s ease;
+
+  &:first-child {
+    margin-left: 0;
+  }
+
+  &:last-child {
+    margin-right: 0;
+  }
+
+  &:hover {
+    background-color: ${props => props.active ? '#45a049' : '#f0f0f0'};
+  }
 `;

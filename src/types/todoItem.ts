@@ -5,6 +5,7 @@ export interface TodoItem {
     priority: PriorityType;
     order: number;
     editing: boolean;
+    dueDate: Date | null;
 }
 
 export type FilterType = 'all' | 'active' | 'completed';

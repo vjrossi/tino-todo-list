@@ -5,15 +5,20 @@ const STORAGE_KEY = 'todos';
 export const todoService = {
   getTodos: (): TodoItem[] => {
     const savedTodos = localStorage.getItem(STORAGE_KEY);
-    return savedTodos ? JSON.parse(savedTodos) : [];
+    return savedTodos ? JSON.parse(savedTodos, (key, value) => {
+      if (key === 'dueDate' && value) {
+        return new Date(value);
+      }
+      return value;
+    }) : [];
   },
 
   saveTodos: (todos: TodoItem[]): void => {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(todos));
   },
 
-  addTodo: (todos: TodoItem[], text: string, priority: PriorityType): TodoItem[] => {
-    const newTodo: TodoItem = { id: Date.now(), text, completed: false, priority, order: todos.length, editing: false };
+  addTodo: (todos: TodoItem[], text: string, priority: PriorityType, dueDate: Date | null): TodoItem[] => {
+    const newTodo: TodoItem = { id: Date.now(), text, completed: false, priority, order: todos.length, editing: false, dueDate };
     const updatedTodos = [...todos, newTodo];
     todoService.saveTodos(updatedTodos);
     return updatedTodos;
